@@ -25,9 +25,87 @@ def get_text_message_input(recipient, text):
     )
 
 
+# def generate_response(response):
+#     # Return text in uppercase
+#     return response.upper()
+
+
+# Cargar la lista de usuarios desde el archivo JSON
+
+
+
+
+def cargar_usuarios():
+    try:
+        with open('data/tecnicos.json', 'r', encoding='utf-8') as f:
+            usuarios = json.load(f)
+            # Imprimir los datos cargados para verificar el acceso
+            print("Usuarios cargados desde tecnicos.json:", usuarios)
+            return usuarios
+    except FileNotFoundError:
+        logging.error("El archivo tecnicos.json no fue encontrado.")
+        return []
+    except json.JSONDecodeError:
+        logging.error("Error al leer el archivo JSON.")
+        return []
+
+
+
+
+
+# Variable global para almacenar el estado de la conversación
+estado_conversacion = {}
+
+# Función para recuperar la contraseña
+def recuperar_contrasena(nombre_usuario, respuesta_seguridad):
+    # Cargar los usuarios desde el archivo
+    usuarios = cargar_usuarios()
+
+    # Buscar al usuario en la lista
+    for usuario in usuarios:
+        if usuario["nombre"].lower() == nombre_usuario.lower():
+            # Comparar la respuesta de seguridad
+            if usuario["respuesta_seguridad"].lower() == respuesta_seguridad.lower():
+                return f"Tu contraseña es: {usuario['contrasena']}"
+            else:
+                return "La respuesta de seguridad es incorrecta. Intenta de nuevo."
+    return "Usuario no encontrado."
+
+# Función principal para generar la respuesta
 def generate_response(response):
-    # Return text in uppercase
-    return response.upper()
+    # Convertir el mensaje a minúsculas para facilitar la comparación
+    message = response.lower().strip()
+
+    # Saludos básicos
+    if message in ['hola', 'hello', 'hi']:
+        return "Hola! Mi nombre es SICOF ¿en qué puedo ayudarte?\n1. Recuperar contraseña\n2. Ayuda\n3. Soporte\n4. Otro"
+    
+    # Opción para recuperar la contraseña
+    if message == "1" or message == "recuperar contraseña":
+        estado_conversacion.clear()  # Limpiar el estado si es necesario
+        estado_conversacion['paso'] = 'nombre_usuario'
+        return "Por favor, dime cuál es tu FFM)."
+
+    # Si el usuario proporciona el nombre
+    if 'paso' in estado_conversacion and estado_conversacion['paso'] == 'nombre_usuario':
+        nombre_usuario = message.strip()
+        estado_conversacion['nombre_usuario'] = nombre_usuario
+        estado_conversacion['paso'] = 'respuesta_seguridad'
+        return f"¿Cuál es la respuesta de seguridad para el usuario {nombre_usuario}?"
+
+    # Si el usuario proporciona la respuesta de seguridad
+    if 'paso' in estado_conversacion and estado_conversacion['paso'] == 'respuesta_seguridad':
+        respuesta_seguridad = message.strip()
+        nombre_usuario = estado_conversacion['nombre_usuario']
+        return recuperar_contrasena(nombre_usuario, respuesta_seguridad)
+    
+    # Respuesta por defecto si el mensaje no se entiende
+    return "No entiendo tu mensaje. Por favor, escribe:\n\n" \
+           "'Hola' para comenzar\n" \
+           "'recuperar contraseña' para recuperar tu contraseña"
+
+
+
 
 
 def send_message(data):

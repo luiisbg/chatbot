@@ -1,0 +1,19 @@
+[
+    {
+      "nombre": "Juan Pérez",
+      "contrasena": "1234abc",
+      "zona_de_trabajo": "Desarrollo Web",
+      "fecha_nacimiento": "1990-05-12",
+      "pregunta_seguridad": "¿En qué ciudad naciste?",
+      "respuesta_seguridad": "Madrid"
+    },
+    {
+      "nombre": "Ana García",
+      "contrasena": "abcd5678",
+      "zona_de_trabajo": "Soporte Técnico",
+      "fecha_nacimiento": "1985-09-23",
+      "pregunta_seguridad": "¿Nombre de tu primera mascota?",
+      "respuesta_seguridad": "Rex"
+    }
+  ]
+  
